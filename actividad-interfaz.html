@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explora la interfaz de Audacity · Práctica 1 · Digitalización 4º ESO</title>
+<meta name="author" content="Carlos Alberto Toledo">
+<style>
+:root{--c1:#5b2a86;--c2:#ff7a00;--c3:#0f9d8a;--bg:#f6f4fb;--txt:#1d1b26;--muted:#6b6880}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5;font-size:17px}
+header{background:var(--c1);color:#fff;padding:14px 18px}
+header h1{margin:0;font-size:1.35em}
+header p{margin:2px 0 0;opacity:.9;font-size:.9em}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:0 2px 10px rgba(60,40,100,.08)}
+h2{color:var(--c1);margin:.2em 0 .6em;font-size:1.3em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tabs button{background:#ece6f6;color:var(--c1);border:0;border-radius:9px;padding:8px 12px;font:inherit;font-size:.92em;cursor:pointer}
+.tabs button.on{background:var(--c1);color:#fff}
+.tabs button.done::after{content:" ✓"}
+.pane{display:none}.pane.on{display:block}
+button.b{font:inherit;background:var(--c1);color:#fff;border:0;border-radius:9px;padding:9px 16px;cursor:pointer}
+button.b.org{background:var(--c2)}
+button.b:disabled{opacity:.4;cursor:default}
+input[type=text],input[type=number],select,textarea{font:inherit;padding:7px 9px;border:2px solid #d8cdea;border-radius:8px;background:#fff}
+input.w{width:100%}
+.prob{border:2px solid #eee;border-radius:12px;padding:12px 14px;margin:12px 0}
+.prob.ok{border-color:#19a34a;background:#f3fcf6}.prob.ko{border-color:#d32f2f;background:#fff5f5}
+.prob .sol{font-size:.92em;color:#333;margin-top:8px;display:none;background:#faf8fd;border-radius:8px;padding:8px}
+.opts label{display:block;padding:7px 10px;border:2px solid #eee;border-radius:9px;margin:6px 0;cursor:pointer}
+.opts label.ok{border-color:#19a34a;background:#e9f9ee}.opts label.ko{border-color:#d32f2f;background:#fdeaea}
+.lab{font-size:.85em;color:var(--muted)}
+.ojo{background:#fff7ec;border-left:6px solid var(--c2);border-radius:10px;padding:10px 14px;margin:12px 0}
+.score{font-size:1.05em;font-weight:700;color:var(--c1)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.partinfo{min-height:56px;background:#fff7ec;border-radius:10px;padding:10px 14px;margin-top:10px;border-left:6px solid var(--c2);font-size:1.05em}
+.reto{border:2px solid #f0d5e8;border-radius:12px;padding:10px 12px;margin:10px 0}
+.reto label{font-weight:600}
+#rep{display:none}
+table.r{border-collapse:collapse;width:100%}table.r td,table.r th{border:1px solid #ccc;padding:6px 8px;text-align:left}table.r th{background:#eee}
+.big{font-size:2.2em;font-weight:800;color:var(--c1)}
+footer{text-align:center;color:var(--muted);font-size:.85em;margin:30px 0}
+.lock{opacity:.5;pointer-events:none}
+@media print{
+ body{background:#fff;font-size:12pt}
+ header,main>*:not(#rep),footer{display:none!important}
+ #rep{display:block!important}
+ .noprint{display:none!important}
+}
+.bigq{font-size:1.15em}
+.optsB button{display:block;width:100%;text-align:left;background:#fff;color:var(--txt);border:2px solid #e6def3;border-radius:9px;padding:9px 12px;margin:6px 0;font:inherit;cursor:pointer}
+.optsB button.ok{border-color:#19a34a;background:#e9f9ee}.optsB button.ko{border-color:#d32f2f;background:#fdeaea}
+/* ===== Réplica simplificada de Audacity 2.3.3 (tema clásico) ===== */
+.aud{font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#222;background:#d6d6d6;border:1px solid #888;border-radius:6px;overflow:hidden;user-select:none;max-width:980px;margin:0 auto;box-shadow:0 4px 18px rgba(0,0,0,.18)}
+.aud *{box-sizing:border-box}
+.aud .titlebar{background:#3c3c3c;color:#eee;padding:4px 8px;font-size:11px;display:flex;justify-content:space-between}
+.aud .menubar{background:#f2f2f2;padding:3px 6px;display:flex;gap:12px;border-bottom:1px solid #bbb}
+.aud .row{display:flex;flex-wrap:wrap;gap:4px;padding:4px;background:#d6d6d6;border-bottom:1px solid #b5b5b5;align-items:stretch}
+.aud .tb{background:#e4e4e4;border:1px solid #b0b0b0;border-radius:2px;padding:3px;display:flex;align-items:center;gap:3px}
+.aud .grip{width:6px;align-self:stretch;background:repeating-linear-gradient(0deg,#999 0 1px,transparent 1px 3px);margin-right:2px}
+.aud .tbtn{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#c9c9c9);border:1px solid #888;display:flex;align-items:center;justify-content:center}
+.aud .tbtn svg{width:18px;height:18px}
+.aud .tool{width:24px;height:22px;border:1px solid #9a9a9a;background:linear-gradient(#fafafa,#ddd);display:flex;align-items:center;justify-content:center;font-weight:bold}
+.aud .tool.on{background:#bcd3ee;border-color:#5b7fb3}
+.aud .tool svg{width:16px;height:16px}
+.aud .tools{display:grid;grid-template-columns:repeat(3,24px);gap:2px}
+.aud .meter{display:flex;flex-direction:column;gap:2px;width:250px}
+.aud .meter .m{display:flex;align-items:center;gap:3px}
+.aud .meter .bar{flex:1;height:9px;background:linear-gradient(90deg,#2fa84f 0 70%,#e8c22b 70% 88%,#d33 88%);opacity:.35;border:1px solid #999}
+.aud .meter .scale{font-size:8px;color:#555;display:flex;justify-content:space-between;padding-left:16px}
+.aud .slider{display:flex;align-items:center;gap:3px}
+.aud .slider .track{width:70px;height:4px;background:#888;position:relative;border-radius:2px}
+.aud .slider .track::after{content:"";position:absolute;left:55%;top:-5px;width:8px;height:14px;background:#eee;border:1px solid #666}
+.aud .ebtn{width:22px;height:22px;border:1px solid #9a9a9a;background:linear-gradient(#fafafa,#ddd);display:flex;align-items:center;justify-content:center}
+.aud .ebtn svg{width:15px;height:15px}
+.aud .sep{width:6px}
+.aud select,.aud .sel{font-size:10px;padding:1px 3px;border:1px solid #999;background:#fff;border-radius:2px}
+.aud .ruler{display:flex;background:#e9e9e9;border-bottom:1px solid #aaa;height:20px}
+.aud .ruler .lab{width:150px;border-right:1px solid #aaa}
+.aud .ruler .ticks{flex:1;position:relative;background:repeating-linear-gradient(90deg,#999 0 1px,transparent 1px 10%);background-position:0 12px;background-size:100% 8px;background-repeat:repeat-x}
+.aud .ruler .ticks span{position:absolute;top:1px;font-size:9px}
+.aud .trackarea{background:#c0c0c0;padding:4px 0}
+.aud .track{display:flex;background:#ddd;border:1px solid #888;margin:0 4px}
+.aud .tcp{width:146px;background:#e6e6e6;border-right:1px solid #999;padding:3px;display:flex;flex-direction:column;gap:4px}
+.aud .tcp .top{display:flex;gap:2px}
+.aud .tcp .x{width:14px;height:14px;border:1px solid #888;font-size:10px;line-height:12px;text-align:center;background:#f4f4f4}
+.aud .tcp .name{flex:1;border:1px solid #888;background:#f4f4f4;font-size:10px;padding:0 3px;white-space:nowrap;overflow:hidden}
+.aud .tcp .ms{display:flex;gap:3px}
+.aud .tcp .ms span{flex:1;border:1px solid #888;background:linear-gradient(#fafafa,#ddd);text-align:center;padding:2px 0;font-size:10px}
+.aud .tcp .info{font-size:9px;color:#333;line-height:1.25}
+.aud .wave{flex:1;background:#fff;position:relative;min-height:170px}
+.aud .wave svg{width:100%;height:100%;display:block}
+.aud .selbar{display:flex;gap:10px;padding:5px 6px;background:#d6d6d6;border-top:1px solid #aaa;align-items:center;flex-wrap:wrap}
+.aud .selbar .grp{display:flex;flex-direction:column;gap:2px}
+.aud .time{font-family:monospace;background:#000;color:#9fe;padding:1px 4px;font-size:11px}
+.aud .status{background:#efefef;padding:2px 6px;border-top:1px solid #aaa;font-size:10px;display:flex;justify-content:space-between}
+/* zonas clicables */
+.aud [data-part]{cursor:pointer;position:relative;transition:outline-color .15s}
+.aud [data-part]:hover{outline:2px solid #ff8a00;outline-offset:1px;z-index:2}
+.aud [data-part].hl{outline:3px solid #ff3d00;outline-offset:1px;z-index:3;animation:audpulse 1s infinite}
+.aud [data-part].ok{outline:3px solid #19a34a;outline-offset:1px}
+.aud [data-part].ko{outline:3px solid #d32f2f;outline-offset:1px}
+@keyframes audpulse{50%{outline-color:#ffc400}}
+.aud-scroll{overflow-x:auto;padding:6px 2px}
+.aud-scroll .aud{min-width:900px}
+
+</style>
+</head>
+<body>
+<header><h1>🎛️ Actividad · Explora la interfaz de Audacity</h1><p>Digitalización 4º ESO · Unidad 3: Entorno digital y creación de contenidos · Parte 1: Edición de audio · Práctica 1</p></header>
+<main>
+<div class="card" id="start">
+ <h2>👤 Antes de empezar</h2>
+ <div class="g2">
+  <div><span class="lab">Nombre y apellidos</span><input class="w" type="text" id="nom" autocomplete="off"></div>
+  <div><span class="lab">Grupo</span><input class="w" type="text" id="gru" placeholder="Ej.: 4º B" autocomplete="off"></div>
+ </div>
+ <div class="ojo">📌 La actividad tiene <b>tres pasos</b>:<br>
+ <b>0 · Calentamiento</b> (sin nota): explora la ventana todo lo que quieras.<br>
+ <b>A · ¿Dónde está?</b> (6 puntos): te pedimos 10 elementos y tienes que hacer clic en ellos. Solo cuenta el <b>primer clic</b>.<br>
+ <b>B · ¿Para qué sirve?</b> (4 puntos): marcamos un elemento y eliges qué hace.<br>
+ Al final descargas un <b>PDF con tu nota</b>, lo subes a Drive y lo insertas en tu subpágina «Edición de audio» de Google Sites.</div>
+ <button class="b" id="go">Empezar ▶</button>
+</div>
+
+<div id="app" style="display:none">
+ <div class="card" style="padding:10px 16px"><span id="who"></span> · <span class="score" id="tot">Nota: 0 / 10</span></div>
+ <div class="card">
+  <h2 id="stTit">0 · Calentamiento</h2>
+  <div class="partinfo bigq" id="gInfo">👆 Haz clic en cualquier parte de la ventana para saber qué es. Cuando te sientas seguro, empieza la parte A.</div>
+  <div id="optsB" class="optsB"></div>
+  <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap"><button class="b" id="toA">Estoy listo: empezar la parte A ▶</button><button class="b org" id="pdf" style="display:none">📄 Descargar PDF con mi nota</button></div>
+  <div class="aud-scroll"><div class="aud" id="AUDID">
+ <div class="titlebar"><span>s1_melodia_estereo</span><span>— □ ✕</span></div>
+ <div class="menubar" data-part="menu"><span>Archivo</span><span>Editar</span><span>Seleccionar</span><span>Ver</span><span>Transporte</span><span>Pistas</span><span>Generar</span><span>Efecto</span><span>Analizar</span><span>Herramientas</span><span>Ayuda</span></div>
+ <div class="row">
+  <div class="tb"><div class="grip"></div>
+   <div class="tbtn" data-part="pause"><svg viewBox="0 0 20 20"><rect x="4" y="3" width="4" height="14" fill="#2b4f8a"/><rect x="12" y="3" width="4" height="14" fill="#2b4f8a"/></svg></div>
+   <div class="tbtn" data-part="play"><svg viewBox="0 0 20 20"><polygon points="5,3 17,10 5,17" fill="#1f8a3a"/></svg></div>
+   <div class="tbtn" data-part="stop"><svg viewBox="0 0 20 20"><rect x="4" y="4" width="12" height="12" fill="#c58b00"/></svg></div>
+   <div class="tbtn" data-part="start"><svg viewBox="0 0 20 20"><rect x="3" y="4" width="2.5" height="12" fill="#5d2b8a"/><polygon points="17,4 7,10 17,16" fill="#5d2b8a"/></svg></div>
+   <div class="tbtn" data-part="end"><svg viewBox="0 0 20 20"><polygon points="3,4 13,10 3,16" fill="#5d2b8a"/><rect x="14.5" y="4" width="2.5" height="12" fill="#5d2b8a"/></svg></div>
+   <div class="tbtn" data-part="rec"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="#d11"/></svg></div>
+  </div>
+  <div class="tb"><div class="grip"></div>
+   <div class="tools">
+    <div class="tool on" data-part="tsel" title="">I</div>
+    <div class="tool" data-part="tenv"><svg viewBox="0 0 16 16"><path d="M1 3 L6 8 L10 5 L15 9" stroke="#1a4fa0" stroke-width="1.6" fill="none"/><path d="M1 13 L6 8 L10 11 L15 7" stroke="#1a4fa0" stroke-width="1.6" fill="none"/></svg></div>
+    <div class="tool" data-part="tdraw"><svg viewBox="0 0 16 16"><path d="M3 13 L4 10 L11 3 L13 5 L6 12 Z" fill="#e0b040" stroke="#555"/></svg></div>
+    <div class="tool" data-part="tzoom"><svg viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4.5" stroke="#333" stroke-width="1.6" fill="#cfe3ff"/><line x1="10" y1="10" x2="15" y2="15" stroke="#333" stroke-width="2"/></svg></div>
+    <div class="tool" data-part="tshift"><svg viewBox="0 0 16 16"><path d="M1 8 H15 M1 8 L4 5 M1 8 L4 11 M15 8 L12 5 M15 8 L12 11" stroke="#333" stroke-width="1.6" fill="none"/></svg></div>
+    <div class="tool" data-part="tmulti">✱</div>
+   </div>
+  </div>
+  <div class="tb"><div class="grip"></div>
+   <div class="meter">
+    <div class="m" data-part="mrec"><span>🎤</span><span>I</span><div class="bar"></div></div>
+    <div class="scale"><span>-57</span><span>-48</span><span>-36</span><span>-24</span><span>-12</span><span>0</span></div>
+    <div class="m" data-part="mplay"><span>🔈</span><span>I</span><div class="bar"></div></div>
+   </div>
+  </div>
+  <div class="tb" data-part="mixer"><div class="grip"></div>
+   <div style="display:flex;flex-direction:column;gap:6px">
+    <div class="slider">🎤<div class="track"></div></div>
+    <div class="slider">🔈<div class="track"></div></div>
+   </div>
+  </div>
+  <div class="tb"><div class="grip"></div>
+   <div class="ebtn" data-part="cut"><svg viewBox="0 0 16 16"><circle cx="4" cy="12" r="2.5" stroke="#333" fill="none"/><circle cx="12" cy="12" r="2.5" stroke="#333" fill="none"/><path d="M5.5 10 L12 1 M10.5 10 L4 1" stroke="#333" stroke-width="1.3"/></svg></div>
+   <div class="ebtn" data-part="copy"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="8" height="10" fill="#fff" stroke="#333"/><rect x="6" y="5" width="8" height="10" fill="#fff" stroke="#333"/></svg></div>
+   <div class="ebtn" data-part="paste"><svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="12" fill="#d9b77a" stroke="#333"/><rect x="5" y="1.5" width="6" height="3" fill="#aaa" stroke="#333"/><rect x="5" y="6" width="6" height="7" fill="#fff" stroke="#333"/></svg></div>
+   <div class="sep"></div>
+   <div class="ebtn" data-part="trim"><svg viewBox="0 0 16 16"><path d="M1 8 h3 M12 8 h3" stroke="#999"/><path d="M5 3 v10 M11 3 v10" stroke="#333"/><path d="M6 8 q1-4 2 0 t2 0" stroke="#1a4fa0" fill="none"/></svg></div>
+   <div class="ebtn" data-part="silence"><svg viewBox="0 0 16 16"><path d="M1 8 q1.5-5 3 0 t3 0" stroke="#1a4fa0" fill="none"/><path d="M7 8 h4" stroke="#333" stroke-width="2"/><path d="M11 8 q1.5-5 3 0" stroke="#1a4fa0" fill="none"/></svg></div>
+   <div class="sep"></div>
+   <div class="ebtn" data-part="undo"><svg viewBox="0 0 16 16"><path d="M5 4 L1.5 7.5 L5 11" stroke="#333" stroke-width="1.6" fill="none"/><path d="M2 7.5 H10 a4 4 0 0 1 0 8" stroke="#333" stroke-width="1.6" fill="none"/></svg></div>
+   <div class="ebtn" data-part="redo"><svg viewBox="0 0 16 16"><path d="M11 4 L14.5 7.5 L11 11" stroke="#333" stroke-width="1.6" fill="none"/><path d="M14 7.5 H6 a4 4 0 0 0 0 8" stroke="#333" stroke-width="1.6" fill="none"/></svg></div>
+   <div class="sep"></div>
+   <div class="ebtn" data-part="zin"><svg viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4.5" stroke="#333" stroke-width="1.4" fill="#fff"/><path d="M4 6.5h5M6.5 4v5M10 10l5 5" stroke="#333" stroke-width="1.6"/></svg></div>
+   <div class="ebtn" data-part="zout"><svg viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4.5" stroke="#333" stroke-width="1.4" fill="#fff"/><path d="M4 6.5h5M10 10l5 5" stroke="#333" stroke-width="1.6"/></svg></div>
+   <div class="ebtn" data-part="zfit"><svg viewBox="0 0 16 16"><rect x="1.5" y="3.5" width="13" height="9" stroke="#333" fill="#fff"/><path d="M3 8 h10 M3 8 l2-2 M3 8 l2 2 M13 8 l-2-2 M13 8 l-2 2" stroke="#333"/></svg></div>
+  </div>
+  <div class="tb" data-part="device"><div class="grip"></div>
+   <span class="sel">ALSA</span><span>🎤</span><span class="sel">Micrófono interno</span><span class="sel">2 canales (estéreo) de grab… ▾</span><span>🔈</span><span class="sel">Altavoces ▾</span>
+  </div>
+ </div>
+ <div class="ruler" data-part="ruler"><div class="lab"></div><div class="ticks"><span style="left:0%">0,0</span><span style="left:20%">3,0</span><span style="left:40%">6,0</span><span style="left:60%">9,0</span><span style="left:80%">12,0</span></div></div>
+ <div class="trackarea">
+  <div class="track">
+   <div class="tcp">
+    <div class="top"><div class="x" data-part="tclose">✕</div><div class="name" data-part="tname">s1_melodia_estereo ▾</div></div>
+    <div class="ms"><span data-part="mute">Silencio</span><span data-part="solo">Solo</span></div>
+    <div class="slider" data-part="gain">−<div class="track"></div>+</div>
+    <div class="slider" data-part="pan">I<div class="track"></div>D</div>
+    <div class="info" data-part="tinfo">Estéreo, 44100Hz<br>16-bit PCM</div>
+   </div>
+   <div class="wave" data-part="wave"><svg class="wsvg" viewBox="0 0 1000 170" preserveAspectRatio="none"></svg></div>
+  </div>
+ </div>
+ <div class="selbar">
+  <div class="grp" data-part="rate"><span>Frecuencia del proyecto (Hz)</span><span class="sel">44100 ▾</span></div>
+  <div class="grp"><span>Ajustar a</span><span class="sel">Desactivado ▾</span></div>
+  <div class="grp" data-part="seltime"><span>Inicio y fin de la selección ▾</span><span><span class="time">00 h 00 m 03,215 s</span> <span class="time">00 h 00 m 07,480 s</span></span></div>
+  <div class="grp" data-part="pos"><span>Posición del audio</span><span class="time">00 h 00 m 00,000 s</span></div>
+ </div>
+ <div class="status" data-part="status"><span>Detenido.</span><span>Frecuencia real: 44100</span></div>
+</div></div>
+
+ </div>
+ <div class="card" id="fin" style="display:none">
+  <h2>📄 Tu resultado</h2><div class="big" id="bigNota"></div><div id="sumTab"></div>
+  <div class="ojo">Pulsa «Descargar PDF» y, en la ventana de imprimir, elige como destino <b>«Guardar como PDF»</b>. Después: súbelo a Drive → Compartir → Copiar enlace → en Sites, <b>Insertar → Insertar → Por URL</b>.</div>
+ </div>
+</div>
+<div id="rep"></div>
+<footer>Actividad elaborada por <b>Carlos Alberto Toledo</b> · Digitalización 4º ESO</footer>
+</main>
+<script>
+// ===== Datos de las partes de la réplica de Audacity 2.3.3 =====
+const AUD_PARTS={
+ menu:{n:"Barra de menús",d:"Aquí está TODO lo que hace Audacity: Archivo (abrir, guardar proyecto, exportar), Editar, Pistas, Generar, Efecto… Si no encuentras un botón, búscalo en los menús."},
+ pause:{n:"Pausa",d:"Detiene un momento la reproducción o la grabación. Al volver a pulsarlo, sigue desde el mismo punto."},
+ play:{n:"Reproducir",d:"Escucha el audio. Atajo: barra espaciadora. Si hay una zona seleccionada, solo suena esa zona."},
+ stop:{n:"Detener",d:"Para la reproducción o la grabación. Usa Detener (no Pausa) antes de editar: con el audio en pausa muchos menús no funcionan."},
+ start:{n:"Saltar al inicio",d:"Lleva el cursor al principio del audio. Atajo: tecla Inicio."},
+ end:{n:"Saltar al final",d:"Lleva el cursor al final del audio. Atajo: tecla Fin."},
+ rec:{n:"Grabar",d:"Empieza a grabar desde el micrófono elegido en la barra de dispositivos. Se crea una pista nueva. Atajo: R."},
+ tsel:{n:"Herramienta de selección",d:"La más usada. Haz clic y arrastra sobre la onda para seleccionar un trozo. Lo seleccionado se ve más oscuro."},
+ tenv:{n:"Herramienta de envolvente",d:"Sirve para subir o bajar el volumen poco a poco en zonas concretas (por ejemplo, bajar la música cuando hablas). La usaremos en la sesión 3."},
+ tdraw:{n:"Herramienta de dibujo",d:"Permite cambiar muestras sueltas del audio a mano. Solo funciona con muchísimo zoom, cuando se ven los puntos (las muestras)."},
+ tzoom:{n:"Herramienta de zoom",d:"Clic izquierdo para acercar y clic derecho para alejar. Imprescindible para cortar con precisión."},
+ tshift:{n:"Herramienta de desplazamiento en el tiempo",d:"Mueve un trozo de audio a la izquierda o a la derecha (o a otra pista). Útil para colocar la voz sobre la música."},
+ tmulti:{n:"Multiherramienta",d:"Cambia sola entre selección, envolvente, dibujo y zoom según dónde pongas el ratón. Mejor no usarla al empezar."},
+ mrec:{n:"Medidor de grabación",d:"Indica el nivel que entra por el micrófono. Haz clic en él para vigilar el nivel antes de grabar. Si llega a 0 y se pone rojo, saturas: aléjate o baja la entrada."},
+ mplay:{n:"Medidor de reproducción",d:"Indica el nivel de lo que suena. Lo ideal es que se mueva alrededor de -12 dB, sin llegar a 0."},
+ mixer:{n:"Mezclador (volumen de entrada y de salida)",d:"Arriba: volumen del micrófono (entrada). Abajo: volumen de los altavoces (salida). Cambiar la salida NO modifica el archivo, solo cómo lo oyes tú."},
+ cut:{n:"Cortar",d:"Quita lo seleccionado y lo guarda en el portapapeles para pegarlo en otro sitio. Atajo: Ctrl+X."},
+ copy:{n:"Copiar",d:"Copia lo seleccionado sin quitarlo. Atajo: Ctrl+C."},
+ paste:{n:"Pegar",d:"Pega lo copiado donde está el cursor. Atajo: Ctrl+V."},
+ trim:{n:"Recortar audio",d:"Lo contrario de cortar: deja SOLO lo seleccionado y borra todo lo demás de esa pista. Atajo: Ctrl+T."},
+ silence:{n:"Silenciar audio",d:"Convierte lo seleccionado en silencio absoluto, sin cambiar la duración. Atajo: Ctrl+L."},
+ undo:{n:"Deshacer",d:"Vuelve atrás la última acción. ¡Tu mejor amigo! Atajo: Ctrl+Z."},
+ redo:{n:"Rehacer",d:"Repite lo que acabas de deshacer. Atajo: Ctrl+Y."},
+ zin:{n:"Acercar (zoom +)",d:"Amplía la vista para ver más detalle. Atajo: Ctrl+1."},
+ zout:{n:"Alejar (zoom −)",d:"Reduce la vista. Atajo: Ctrl+3."},
+ zfit:{n:"Ajustar el proyecto a la ventana",d:"Muestra el audio completo en la ventana. Atajo: Ctrl+F."},
+ device:{n:"Barra de dispositivos",d:"Eliges el sistema de audio, el micrófono (entrada), si grabas en mono (1 canal) o estéreo (2 canales) y los altavoces (salida)."},
+ ruler:{n:"Regla de tiempo (línea de tiempo)",d:"Indica los segundos. Si haces clic en ella, el audio empieza a sonar desde ese punto."},
+ tclose:{n:"Cerrar pista",d:"Elimina la pista entera del proyecto (se puede deshacer con Ctrl+Z)."},
+ tname:{n:"Nombre y menú de la pista",d:"Haz clic para abrir el menú de la pista: cambiar el nombre, pasar de estéreo a mono, ver la onda como espectrograma…"},
+ mute:{n:"Silencio (de la pista)",d:"Hace que esa pista no suene al reproducir, pero no la borra. La onda se vuelve gris."},
+ solo:{n:"Solo",d:"Hace que SOLO suene esa pista y se callen las demás."},
+ gain:{n:"Ganancia de la pista",d:"Sube o baja el volumen de toda la pista (− / +)."},
+ pan:{n:"Balance (panorámica)",d:"Envía el sonido más hacia el altavoz izquierdo (I) o derecho (D)."},
+ tinfo:{n:"Información de la pista",d:"Dice si la pista es mono o estéreo, la frecuencia de muestreo (Hz) y el tamaño de la muestra (16 bits, 32 bits…)."},
+ wave:{n:"Forma de onda",d:"El dibujo del sonido: cuanto más alta es la onda, más volumen. Una pista estéreo muestra DOS ondas (canal izquierdo arriba y derecho abajo). Si la onda toca los bordes, el audio está saturado."},
+ rate:{n:"Frecuencia del proyecto",d:"Muestras por segundo con las que se graba y se exporta el proyecto. 44100 Hz es la calidad CD."},
+ seltime:{n:"Inicio y fin de la selección",d:"Muestra dónde empieza y acaba lo seleccionado. Desde el desplegable puedes ver la DURACIÓN de la selección. También puedes escribir los tiempos para seleccionar con precisión."},
+ pos:{n:"Posición del audio",d:"Indica por qué segundo va la reproducción."},
+ status:{n:"Barra de estado",d:"Dice lo que está haciendo Audacity (Detenido, Reproduciendo, Grabando…) y la frecuencia real."}
+};
+function audDrawWave(root){
+ const svg=root.querySelector('.wsvg'); if(!svg) return;
+ let rnd=7; const r=()=>{rnd=(rnd*9301+49297)%233280;return rnd/233280};
+ const env=x=>{ // envolvente tipo notas
+  const n=(x*24)%1; return Math.max(0.08,Math.exp(-3*n))*(x<0.33?0.75:(x<0.66?0.75:(x<0.9?1:0.3)));};
+ let p1='',p2='';
+ for(let i=0;i<=1000;i+=2){const x=i/1000,a=env(x)*(0.6+0.4*r());
+  const L=(x<0.33||x>0.66)?a:0.03, R=(x>0.33)?a:0.03;
+  p1+=`M${i},${42-L*36}L${i},${42+L*36}`;p2+=`M${i},${128-R*36}L${i},${128+R*36}`;}
+ svg.innerHTML=`<rect x="320" y="0" width="430" height="170" fill="#c9d7ee"/>
+ <line x1="0" y1="85" x2="1000" y2="85" stroke="#888" stroke-width="2"/>
+ <path d="${p1}" stroke="#3a5fcd" stroke-width="2"/><path d="${p2}" stroke="#3a5fcd" stroke-width="2"/>
+ <text x="6" y="12" font-size="10" fill="#666">Canal izquierdo</text><text x="6" y="98" font-size="10" fill="#666">Canal derecho</text>`;
+}
+
+let seed=1;function rnd(){seed=(seed*1103515245+12345)%2147483648;return seed/2147483648}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const fmt=(n,d=2)=>n.toLocaleString('es',{maximumFractionDigits:d});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SHORT={play:'Reproduce el audio (o solo la zona seleccionada).',rec:'Graba desde el micrófono en una pista nueva.',stop:'Para la reproducción o la grabación.',
+ tsel:'Selecciona un trozo de la onda arrastrando el ratón.',tenv:'Sube o baja el volumen poco a poco en zonas concretas.',tzoom:'Acerca o aleja la vista de la onda.',
+ tshift:'Mueve un trozo de audio en el tiempo o a otra pista.',mrec:'Indica el nivel que entra por el micrófono.',trim:'Deja solo lo seleccionado y borra todo lo demás.',
+ silence:'Convierte lo seleccionado en silencio sin cambiar la duración.',undo:'Deshace la última acción.',mute:'Hace que la pista no suene, sin borrarla.',
+ solo:'Hace que suene solo esa pista y se callen las demás.',pan:'Envía el sonido más hacia el altavoz izquierdo o el derecho.',tinfo:'Muestra si es mono o estéreo, la frecuencia y los bits.',
+ rate:'Fija cuántas muestras por segundo usa el proyecto al grabar y exportar.',device:'Elige el micrófono, los canales de grabación y los altavoces.',cut:'Quita lo seleccionado y lo guarda para pegarlo en otro sitio.',
+ zfit:'Muestra el audio completo en la ventana.',wave:'Dibuja el sonido: cuanto más alta, más volumen.'};
+const GP=['play','stop','rec','pause','start','end','tsel','tenv','tzoom','tshift','tdraw','mrec','mplay','mixer','cut','copy','paste','trim','silence','undo','redo','zin','zout','zfit','device','mute','solo','pan','gain','tinfo','wave','rate','seltime','tname','ruler','menu','tclose'];
+let NAME='',GRP='',INTENTO=1,stage=0,A=[],B=[],idx=0,okA=0,okB=0,lock=false,DET=[];
+const R=()=>document.getElementById('AUDID'),info=document.getElementById('gInfo');
+document.getElementById('go').onclick=()=>{NAME=nom.value.trim();GRP=gru.value.trim();
+ if(NAME.split(/\s+/).length<2){alert('Escribe tu nombre y al menos un apellido.');return}if(!GRP){alert('Escribe tu grupo.');return}
+ seed=(Date.now()%2147483647)||7;for(const ch of NAME)seed=(seed*31+ch.charCodeAt(0))%2147483648;
+ try{const k='dig4_s1_interfaz_'+NAME.toLowerCase();INTENTO=(+localStorage.getItem(k)||0)+1;localStorage.setItem(k,INTENTO)}catch(e){}
+ start.style.display='none';app.style.display='block';who.innerHTML=`👤 <b>${esc(NAME)}</b> (${esc(GRP)}) · intento ${INTENTO}`;audDrawWave(R());};
+function clean(){R().querySelectorAll('[data-part]').forEach(e=>e.classList.remove('ok','ko','hl'))}
+function score(){const t=Math.round((okA*0.6+okB)*100)/100;tot.textContent='Nota: '+fmt(t)+' / 10';return t}
+document.getElementById('toA').onclick=function(){this.style.display='none';stage=1;A=shuffle(GP).slice(0,10);idx=0;stTit.textContent='A · ¿Dónde está? (6 puntos)';askA();};
+function askA(){clean();if(idx>=A.length){startB();return}lock=false;info.innerHTML=`(${idx+1}/10) Haz clic en… <b>${AUD_PARTS[A[idx]].n}</b>`;}
+function startB(){stage=2;idx=0;B=shuffle(Object.keys(SHORT)).slice(0,4);stTit.textContent='B · ¿Para qué sirve? (4 puntos)';askB();}
+function askB(){clean();optsB.innerHTML='';if(idx>=B.length){finish();return}lock=false;const p=B[idx];R().querySelector(`[data-part="${p}"]`).classList.add('hl');
+ info.innerHTML=`(${idx+1}/4) ¿Para qué sirve el elemento marcado en <b style="color:#ff3d00">naranja</b>?`;
+ const ops=shuffle([p,...shuffle(Object.keys(SHORT).filter(k=>k!==p)).slice(0,3)]);
+ ops.forEach(o=>{const b=document.createElement('button');b.textContent=SHORT[o];b.onclick=()=>{if(lock)return;lock=true;
+  if(o===p){okB++;b.classList.add('ok');info.innerHTML=`✅ ¡Correcto! Es <b>${AUD_PARTS[p].n}</b>.`;DET.push('B ✔ '+AUD_PARTS[p].n)}
+  else{b.classList.add('ko');[...optsB.children].find(x=>x.textContent===SHORT[p]).classList.add('ok');info.innerHTML=`❌ Era <b>${AUD_PARTS[p].n}</b>: ${SHORT[p]}`;DET.push('B ✘ '+AUD_PARTS[p].n)}
+  score();idx++;setTimeout(askB,1900);};optsB.appendChild(b)});}
+R().querySelectorAll('[data-part]').forEach(el=>el.addEventListener('click',ev=>{ev.stopPropagation();const p=el.dataset.part;
+ if(stage===0){clean();el.classList.add('hl');info.innerHTML=`<b>${AUD_PARTS[p].n}</b><br>${AUD_PARTS[p].d}`;return}
+ if(stage!==1||lock)return;lock=true;const t=A[idx];
+ if(p===t){okA++;el.classList.add('ok');info.innerHTML='✅ ¡Correcto!';DET.push('A ✔ '+AUD_PARTS[t].n)}
+ else{el.classList.add('ko');R().querySelector(`[data-part="${t}"]`).classList.add('hl');info.innerHTML=`❌ Has pulsado <b>${AUD_PARTS[p].n}</b>. Lo correcto está marcado en naranja.`;DET.push('A ✘ '+AUD_PARTS[t].n)}
+ score();idx++;setTimeout(askA,1500);}));
+function finish(){stage=3;clean();const t=score();stTit.textContent='🏁 ¡Terminado!';info.innerHTML=`Has acertado <b>${okA} de 10</b> en la parte A y <b>${okB} de 4</b> en la parte B.`;
+ fin.style.display='block';pdf.style.display='inline-block';bigNota.textContent='Nota: '+fmt(t)+' / 10';
+ sumTab.innerHTML=`<table class="r"><tr><th>Parte</th><th>Aciertos</th><th>Puntos</th></tr><tr><td>A · ¿Dónde está?</td><td>${okA} / 10</td><td>${fmt(okA*0.6)} / 6</td></tr><tr><td>B · ¿Para qué sirve?</td><td>${okB} / 4</td><td>${okB} / 4</td></tr></table>`;fin.scrollIntoView({behavior:'smooth'});}
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}return h.toString(36).toUpperCase()}
+document.getElementById('pdf').onclick=()=>{const t=score(),now=new Date(),f=now.toLocaleDateString('es')+' '+now.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+ rep.innerHTML=`<h2 style="margin:0">Digitalización 4º ESO · Práctica 1 · Explora la interfaz de Audacity</h2><p>Unidad 3: Entorno digital y creación de contenidos · Parte 1: Edición de audio</p>
+ <table class="r"><tr><th>Alumno/a</th><td>${esc(NAME)}</td><th>Grupo</th><td>${esc(GRP)}</td></tr><tr><th>Fecha</th><td>${f}</td><th>Intento</th><td>${INTENTO}</td></tr></table>
+ <p class="big">Nota: ${fmt(t)} / 10</p>${sumTab.innerHTML}
+ <h3>Detalle</h3><ul>${DET.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>
+ <p style="margin-top:20px;font-size:9pt;color:#555">Código de verificación: <b>${hash(NAME+'|'+GRP+'|'+fmt(t)+'|'+f+'|'+INTENTO)}</b> · Actividad de Carlos Alberto Toledo</p>`;window.print();};
+</script>
+</body>
+</html>
